@@ -140,7 +140,7 @@
             },
             methods: {
                 getDataByMonth(){
-                    // 获取月份信息
+/*                    // 获取月份信息
                     var year = this.currentYear;
                     var month = this.currentMonth;
                     // 给month补0
@@ -162,7 +162,18 @@
                                 type: 'error'
                             });
                         }
-                    });
+                    });*/
+                    axios.post("/ordersetting/getOrderSettingByMonth.do?date="+this.currentYear+"-"+this.currentMonth).then((response)=>{
+                        if(response.data.flag){
+                            this.leftobj = response.data.data;
+                            this.$message({
+                                message:response.data.message,
+                                type:"success"
+                            })
+                        }else{
+                            this.$message.error(response.data.message);
+                        }
+                    })
                 },
 				//预约设置
                 handleOrderSet(day){

@@ -21,4 +21,11 @@
         select cast(date_format(orderDate,'%d') as SIGNED) as date ,number,reservations
         from t_ordersetting where orderDate like #{month}
     </select>
+
+    <!--根据月份查询预约设置信息-->
+    <select id="getOrderSettingByMonthOne"
+            parameterType="hashmap"
+            resultType="com.itheima.pojo.OrderSetting">
+        select * from t_ordersetting where orderDate between #{dateBegin} and #{dateEnd}
+    </select>
 </mapper>

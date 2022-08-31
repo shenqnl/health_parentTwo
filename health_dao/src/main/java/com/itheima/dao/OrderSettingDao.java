@@ -37,4 +37,11 @@ public interface OrderSettingDao {
      * @return
      */
     List<Map<String, Integer>> getOrderSettingByMonth(String s);
+
+    /**
+     * 查询当前月份的预约设置
+     * @param map
+     * @return
+     */
+    List<OrderSetting> getOrderSettingByMonthOne(Map map);
 }

@@ -22,4 +22,11 @@ public interface OrderSettingService {
      * @return
      */
     List<Map<String, Integer>> getOrderSettingByMonth(String month);
+
+    /**
+     * 根据日期查询预约设置数据
+     * @param date
+     * @return
+     */
+    List<Map> getOrderSettingByMonthOne(String date); //参数格式为：2019-03
 }
