@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author shenhuamin
@@ -45,5 +46,16 @@ public class OrderSettingServiceImpl implements OrderSettingService {
                 orderSettingDao.add(orderSetting);
             }
         }
+    }
+
+    /**
+     * 日历展示预约设置信息
+     *
+     * @param month
+     * @return
+     */
+    @Override
+    public List<Map<String, Integer>> getOrderSettingByMonth(String month) {
+        return orderSettingDao.getOrderSettingByMonth(month + "%");
     }
 }

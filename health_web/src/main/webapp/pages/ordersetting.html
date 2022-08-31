@@ -84,7 +84,7 @@
                                         <!-- 当前月 -->
                                         <div class="everyday" v-if="dayobject.day.getMonth()+1 == currentMonth">
                                             <span class="datenumber">{{ dayobject.day.getDate()}}</span>
-                                            
+
 											<template>
                                                 <template v-for="obj in leftobj">
                                                     <template v-if="obj.date == dayobject.day.getDate()">
@@ -105,7 +105,7 @@
                                                 </template>
                                                 <button v-if="dayobject.day > today" @click="handleOrderSet(dayobject.day)" class="orderbtn">设置</button>
                                             </template>
-											
+
                                         </div>
                                     </template>
                                 </li>
@@ -122,7 +122,7 @@
     <script src="../plugins/elementui/index.js"></script>
     <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script>
-        new Vue({
+        var vue = new Vue({
             el: '#app',
             data:{
                 today:new Date(),//当前日期
@@ -139,6 +139,31 @@
                 this.getDataByMonth();
             },
             methods: {
+                getDataByMonth(){
+                    // 获取月份信息
+                    var year = this.currentYear;
+                    var month = this.currentMonth;
+                    // 给month补0
+                    if(month<10){
+                        month = "0" + month;
+                    }
+                    month = year+"-"+month;
+                    axios.get('/ordersetting/getOrderSettingByMonth.do?month=' + month).then(res=>{
+                        if(res.data.flag){
+                            // 成功则刷新列表
+                            this.leftobj = res.data.data;
+                            this.$message({
+                                message:res.data.message,
+                                type:"success"
+                            })
+                        }else{
+                            this.$message({
+                                message: res.data.message,
+                                type: 'error'
+                            });
+                        }
+                    });
+                },
 				//预约设置
                 handleOrderSet(day){
                 },
@@ -182,14 +207,14 @@
                         var d = new Date(this.formatDate(now.getFullYear(), now.getMonth(), 1));
                         d.setDate(35);
                         date = new Date(this.formatDate(d.getFullYear(), d.getMonth() + 1, 1));*/
-                        
+
                         var now = new Date();
 		                    var mm = now.getMonth();
 		                    var yr = now.getFullYear();
 		                    if(now.getMonth() == 0){
 		                        mm = 12;
 		                        yr = now.getFullYear()-1;
-		
+
 		                        var d = new Date(this.formatDate(yr, mm, 1));
 		                        d.setDate(35);
 		                        date = new Date(this.formatDate(d.getFullYear(), d.getMonth() + 1, 1));
@@ -247,7 +272,7 @@
                             dayobject.index = index++;
                         this.days.push(dayobject);
                     }
-                    
+
                     /*this.leftobj = [
                         { date: 1, number: 120, reservations: 1 },
                         { date: 3, number: 120, reservations: 1 },
@@ -256,12 +281,13 @@
                         { date: 8, number: 120, reservations: 1 }
                     ];*/
                 },
-				//切换到当前月份
+                //切换到当前月份
                 goCurrentMonth: function (year, month) {
                     var d = new Date();
                     this.initData(this.formatDate(d.getFullYear(), d.getMonth() + 1, 1));
+                    this.getDataByMonth();
                 },
-				//向前一个月
+                //向前一个月
                 pickPre: function (year, month) {
                     // setDate(0); 上月最后一天
                     // setDate(-1); 上月倒数第二天
@@ -269,12 +295,14 @@
                     var d = new Date(this.formatDate(year, month, 1));
                     d.setDate(0);
                     this.initData(this.formatDate(d.getFullYear(), d.getMonth() + 1, 1));
+                    this.getDataByMonth();
                 },
-				//向后一个月
+                //向后一个月
                 pickNext: function (year, month) {
                     var d = new Date(this.formatDate(year, month, 1));
                     d.setDate(35);////获取指定天之后的日期
                     this.initData(this.formatDate(d.getFullYear(), d.getMonth() + 1, 1));
+                    this.getDataByMonth();
                 },
                 // 返回 类似 2016-01-02 格式的字符串
                 formatDate: function (year, month, day) {

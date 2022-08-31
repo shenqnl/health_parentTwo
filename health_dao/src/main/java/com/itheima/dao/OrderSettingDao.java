@@ -3,12 +3,15 @@ package com.itheima.dao;
 import com.itheima.pojo.OrderSetting;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author shenhuamin
  * @date 2022/8/31
  */
 public interface OrderSettingDao {
+
     /**
      * 通过日期查询预约设置信息
      * @param orderDate
@@ -27,4 +30,11 @@ public interface OrderSettingDao {
      * @param orderSetting
      */
     void add(OrderSetting orderSetting);
+
+    /**
+     * 通过月份查询预约设置信息
+     * @param s
+     * @return
+     */
+    List<Map<String, Integer>> getOrderSettingByMonth(String s);
 }
