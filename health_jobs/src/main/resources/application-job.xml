@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--  注册job任务类  -->
+    <bean id="demoJob" class="com.itheima.job.CleanImgJob"/>
+    <!--  注册任务描述(策略类)  -->
+    <bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!--   绑定任务触发时调用的对象     -->
+        <property name="targetObject" ref="demoJob"/>
+        <!--   绑定任务触发时调用的对象的方法     -->
+        <property name="targetMethod" value="clean7NiuImgJob"/>
+        <!--   是否并发 concurrent=true, 并发 false: 同步   -->
+        <property name="concurrent" value="false"/>
+    </bean>
+    <!--  注册触发器  -->
+    <bean id="trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!--    指定触发时间 0/2 * * * * ?每间隔2秒执行一次
+        七子表达式 真实布署时：凌晨4点：0 0 4 * * ?
+        -->
+        <property name="cronExpression" value="0/30 * * * * ?"/>
+        <!--   绑定的任务策略     -->
+        <property name="jobDetail" ref="jobDetail"/>
+    </bean>
+    <!--  调度容器  -->
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <!--   绑定的触发器  -->
+        <property name="triggers">
+            <list>
+                <ref bean="trigger"/>
+            </list>
+        </property>
+    </bean>
+    <!-- 需要查询数据库，导入dao的配置   -->
+    <import resource="classpath:applicationContext-dao.xml"/>
+</beans>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.dao.SetmealDao">
+    <!--useGeneratedKeys=自增生成的id
+        keyProperty: 把生成的id值赋值给参数的属性id
+    -->
+    <insert id="add" parameterType="setmeal" useGeneratedKeys="true" keyProperty="id">
+        insert into t_setmeal (name,code,helpCode,sex,age,price,remark,attention,img)
+        values(#{name},#{code},#{helpCode},#{sex},#{age},#{price},#{remark},#{attention},#{img})
+    </insert>
+
+    <insert id="addSetmealCheckGroup" parameterType="int">
+        insert into t_setmeal_checkgroup (setmeal_id, checkgroup_id)
+        values (#{setmealId},#{checkgroupId})
+    </insert>
+
+    <select id="selectImgs" resultType="String">
+        select img from t_setmeal
+    </select>
+</mapper>
