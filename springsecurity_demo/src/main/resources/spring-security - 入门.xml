@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+<!--【注意】 security所有的url配置必须以/开头, 否则启动报错-->
+
+
+<!--  拦截的规则: 标定要访问哪些url，登陆用户必须有哪些权限才可以访问
+    http:使用协议，http请求
+    auto-config: 是否自动配置，处理登陆请求，如果没有登陆页面，帮我们生成，处理退出...CSRF过滤...
+    use-expressions: 是否使用sp el表达式 hasAnyRole, hasRole hasAuthority...
+    intercept-url: 拦截url配置,
+    pattern: 匹配的路径规则, /** 所有url请求
+    access:登陆用户要访问这个url（pattern）,就需要有相应的权限才可以访问, 填写值可以是表达式(use-expressions=true)
+           还可以是大写ROLE_开头的字符串(use-expressions=false)
+  -->
+    <security:http auto-config="true" use-expressions="false">
+        <security:intercept-url pattern="/**" access="ROLE_ADMIN"/>
+    </security:http>
+<!--  认证管理器: 提供登陆用户信息, 从哪里获取登陆用户的信息  -->
+    <security:authentication-manager>
+<!--  用户信息的供应商, 提供登陆用户的信息的      -->
+        <security:authentication-provider>
+<!--    用户服务商      -->
+            <security:user-service>
+<!--     user: 启动时往spring容器中注册一个用户对象：内存中写死的。
+        authorities这个用户所拥有的权限集合，案例中要与上方拦截配置中access值要一样
+           {noop}: no operation: 不需要额外的操作，明文
+
+-->
+                <security:user name="admin" authorities="ROLE_ADMIN" password="{noop}admin"/>
+            </security:user-service>
+        </security:authentication-provider>
+    </security:authentication-manager>
+</beans>

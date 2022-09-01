@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:seurity="http://www.springframework.org/schema/security"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+<!--【注意】 security所有的url配置必须以/开头, 否则启动报错-->
+<!--
+/* 当前这个目录下的所有文件
+/** 当前及子目录下的所有文件
+-->
+<!--静态资源过滤 security:none放行-->
+
+    <security:http pattern="/login.html" security="none"/>
+    <security:http pattern="/fail.html" security="none"/>
+    <security:http pattern="/js/**" security="none"/>
+<!--  拦截的规则: 标定要访问哪些url，登陆用户必须有哪些权限才可以访问
+    http:使用协议，http请求
+    auto-config: 是否自动配置，处理登陆请求，如果没有登陆页面，帮我们生成，处理退出...CSRF过滤...
+    use-expressions: 是否使用sp el表达式 hasAnyRole, hasRole hasAuthority...
+    intercept-url: 拦截url配置,
+    pattern: 匹配的路径规则, /** 所有url请求
+    access:登陆用户要访问这个url（pattern）,就需要有相应的权限才可以访问, 填写值可以是表达式(use-expressions=true)
+           还可以是大写ROLE_开头的字符串(use-expressions=false)
+  -->
+    <security:http auto-config="true" use-expressions="false">
+        <security:intercept-url pattern="/**" access="ROLE_ADMIN"/>
+<!--   登陆相关配置
+login-page: 登陆页面，如果用户没有登陆则跳转到这个页面
+login-processing-url: 登陆的form表单提交的url
+username-parameter: 登陆时提交的用户名的参数名 security通过request.getParameter(username)获取登陆用户名request.getParameter("aaa")
+password-parameter: 登陆时提交的密码的参数名 security通过request.getParameter(password)获取密码request.getParameter("bbb")
+default-target-url: 登陆成功后，默认跳转的页面
+authentication-failure-url: 登陆失败跳转的页面
+always-use-default-target: 总是使用默认的页面，登陆成功后，一定跳转到default-target-url
+-->
+        <security:form-login
+            login-page="/login.html"
+            login-processing-url="/login.do"
+            username-parameter="username"
+            password-parameter="password"
+            default-target-url="/index.html"
+            authentication-failure-url="/fail.html"
+            always-use-default-target="true"
+        ></security:form-login>
+<!--    关闭跨域访问控制    -->
+        <seurity:csrf disabled="true"/>
+    </security:http>
+<!--  认证管理器: 提供登陆用户信息, 从哪里获取登陆用户的信息  -->
+    <security:authentication-manager>
+<!--  用户信息的供应商, 提供登陆用户的信息的
+ user-service-ref: 找spring容器中的一个bean对象来获取登陆用户信息
+ -->
+        <security:authentication-provider user-service-ref="userService">
+<!--   将来进行密码校验时，使用这个加密器来校验    -->
+            <security:password-encoder ref="encoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+<!--  注册一个userService, 由@Compent注解与扫包代替
+    <bean id="userService" class="com.itheima.service.UserService"/>
+      -->
+    <context:component-scan base-package="com.itheima"/>
+<!--  注册加密器, 假装自己实现  -->
+    <bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+</beans>
