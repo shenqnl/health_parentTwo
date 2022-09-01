@@ -29,4 +29,10 @@ public interface OrderSettingService {
      * @return
      */
     List<Map> getOrderSettingByMonthOne(String date); //参数格式为：2019-03
+
+    /**
+     * 根据指定日期修改可预约人数
+     * @param orderSetting
+     */
+    void editNumberByDate(OrderSetting orderSetting);
 }

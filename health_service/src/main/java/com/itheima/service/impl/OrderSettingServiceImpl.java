@@ -89,4 +89,29 @@ public class OrderSettingServiceImpl implements OrderSettingService {
         }
         return data;
     }
+
+    /**
+     * 根据指定日期修改可预约人数
+     *
+     * @param orderSetting
+     */
+    @Override
+    public void editNumberByDate(OrderSetting orderSetting) {
+        //2. 通过日期查询预约设置信息
+        OrderSetting osInDb = orderSettingDao.findByOrderDate(orderSetting.getOrderDate());
+        //3. 存在
+        if(null != osInDb) {
+            // 3.1 判断最大预约数是否小于已预约数
+            int reservations = osInDb.getReservations();//已预约数
+            if(orderSetting.getNumber() < reservations) {
+                //    则要报错
+                throw new MyException("最大预约数不能小于已预约人数!");
+            }
+            //    否则可以更新
+            orderSettingDao.updateNumber(orderSetting);
+        }else {
+            //4. 不存在，则插入
+            orderSettingDao.add(orderSetting);
+        }
+    }
 }

@@ -9,10 +9,7 @@ import com.itheima.utils.POIUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
@@ -90,6 +87,28 @@ public class OrderSettingController {
             e.printStackTrace();
             //获取预约设置数据失败
             return new Result(false,MessageConstant.GET_ORDERSETTING_FAIL);
+        }
+    }
+
+    /**
+     * 预约设置 根据指定日期修改可预约人数
+     * @param orderSetting
+     * @return
+     */
+    @PostMapping("/editNumberByDate")
+    public Result editNumberByDate(@RequestBody OrderSetting orderSetting){
+        try {
+            orderSettingService.editNumberByDate(orderSetting);
+            //预约设置成功
+            return new Result(true,MessageConstant.ORDERSETTING_SUCCESS);
+        } catch (MyException e) {
+            return new Result(false, e.getMessage());
+        }
+        catch (Exception e) {
+
+            e.printStackTrace();
+            //预约设置失败
+            return new Result(false,MessageConstant.ORDERSETTING_FAIL);
         }
     }
 }
