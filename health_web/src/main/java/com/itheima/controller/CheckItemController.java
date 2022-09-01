@@ -7,6 +7,7 @@ import com.itheima.entity.Result;
 import com.itheima.pojo.CheckItem;
 import com.itheima.service.CheckItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,8 @@ public class CheckItemController {
      * @return
      */
     @PostMapping("/add")
+    // 权限控制
+    @PreAuthorize("hasAuthority('CHECKITEM_ADD')")
     //@RequestMapping(value = "add", method = RequestMethod.POST)
     public Result add(@RequestBody CheckItem checkItem){
         // 调用service

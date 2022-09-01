@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <!--【注意】 security所有的url配置必须以/开头, 否则启动报错-->
+
+    <!--静态资源过滤 security:none放行-->
+
+    <security:http pattern="/login.html" security="none"/>
+    <security:http pattern="/css/**" security="none"/>
+    <security:http pattern="/js/**" security="none"/>
+    <security:http pattern="/img/**" security="none"/>
+    <security:http pattern="/plugins/**" security="none"/>
+
+    <security:http auto-config="true" use-expressions="true">
+        <!--isAuthenticated 只要认证通过就可以访问-->
+        <security:intercept-url pattern="/**"  access="isAuthenticated()" />
+
+        <security:form-login
+                login-page="/login.html"
+                login-processing-url="/login.do"
+                username-parameter="username"
+                password-parameter="password"
+                default-target-url="/pages/main.html"
+                authentication-failure-url="/login.html"
+                always-use-default-target="true"
+        ></security:form-login>
+
+        <security:headers>
+            <!--      html页面嵌套时，访问策略，SAMEORIGIN：同源，同一个网站内的就可以访问      -->
+            <security:frame-options policy="SAMEORIGIN"/>
+        </security:headers>
+        <!--    关闭跨域访问控制    -->
+        <security:csrf disabled="true"/>
+
+        <!--     logout-url: 退出时请求的地址, invalidate-session:注销session, delete-cookies:删除cookie, logout-success-url:退出后跳转的地址   -->
+        <security:logout logout-url="/logout.do" invalidate-session="true" delete-cookies="true" logout-success-url="/login.html"/>
+    </security:http>
+
+    <!--  开启注解权限控制  -->
+    <security:global-method-security pre-post-annotations="enabled"/>
+
+    <!--  认证管理器: 提供登陆用户信息, 从哪里获取登陆用户的信息  -->
+    <security:authentication-manager>
+        <!--  用户信息的供应商, 提供登陆用户的信息的
+         user-service-ref: 找spring容器中的一个bean对象来获取登陆用户信息
+         -->
+        <security:authentication-provider user-service-ref="springSecurityUserService">
+            <!--   将来进行密码校验时，使用这个加密器来校验    -->
+            <security:password-encoder ref="encoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <!--  注册加密器, 假装自己实现  -->
+    <bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+</beans>
