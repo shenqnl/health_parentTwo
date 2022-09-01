@@ -2,9 +2,19 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/task
+       http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+
+    <!--定时任务删除七牛多余的图片，采用非注解方式    -->
+    <!-- 任务调度器 -->
+    <task:annotation-driven/>
+<!--    <task:scheduler id="scheduler" pool-size="10" />-->
+<!--    &lt;!&ndash;开启注解调度支持 @Scheduled &ndash;&gt;-->
+<!--    <task:annotation-driven executor="scheduler" proxy-target-class="true"/>-->
 
     <!--注解驱动-->
     <mvc:annotation-driven>
